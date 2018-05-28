@@ -12,9 +12,9 @@
 		<property name="serverTimezone">UTC</property>
 		<property name="connection.username">root</property>
 		<property name="connection.password">cancer2164</property>
-		<property name="show_sql">true</property>
-		<property name="hbm2ddl.auto">create</property>
+		<property name="hbm2ddl.auto">update</property>
 		
 		<mapping class="model.Usuario" />
+		<mapping class="model.Producto" />
 	</session-factory>
 </hibernate-configuration>

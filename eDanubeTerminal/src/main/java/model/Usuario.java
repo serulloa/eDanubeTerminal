@@ -1,12 +1,10 @@
 package model;
 
 import javax.persistence.*;
-import org.hibernate.Session;
-
 @Entity
-@Table(name="user")
+@Table(name="usuario")
 public class Usuario {
-	
+
 	@Id
 	private String email;
 	private String name;
@@ -14,10 +12,10 @@ public class Usuario {
 	private int age;
 	private Gender gender;
 	private String password;
+	private boolean premium;
 	
 	public Usuario() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Usuario(String email, String name, String lastName, int age, Gender gender, String password) {
@@ -27,6 +25,7 @@ public class Usuario {
 		this.age = age;
 		this.gender = gender;
 		this.password = password;
+		this.premium = false;
 	}
 	
 	public Usuario login(String email, String password) {
@@ -79,6 +78,14 @@ public class Usuario {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public boolean isPremium() {
+		return premium;
+	}
+
+	public void setPremium(boolean premium) {
+		this.premium = premium;
 	}
 	
 }

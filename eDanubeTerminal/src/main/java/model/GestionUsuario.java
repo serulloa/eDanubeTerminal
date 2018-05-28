@@ -1,52 +1,106 @@
 package model;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.query.Query;
 
-public class GestionUsuario implements IGestionUsuario {
+public class GestionUsuario {
 	
-	private SessionFactory sessionFactory;
-
+	private SessionFactory sf;
+	
+	public GestionUsuario(SessionFactory sf) {
+		this.sf = sf;
+	}
+	
 	public Usuario login(String email, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		Usuario usuario = null;
+		
+		Session session = this.sf.openSession();
+		session.beginTransaction();
+		
+		String hql = "select u from Usuario u where email='" + email + "' and password='" + password + "'";
+		Query<?> query = session.createQuery(hql);
+		List<?> results = query.getResultList();
+		
+		if(!results.isEmpty())
+			usuario = (Usuario) results.get(0);
+		
+		session.getTransaction().commit();
+		session.close();
+		
+		return usuario;
 	}
 
 	public boolean darAltaUsuario(Usuario usuario) {
 		boolean ok = true;
 		
 		try {
-			this.setup();
-			Session session = sessionFactory.openSession();
+			Session session = this.sf.openSession();
 			session.beginTransaction();
 			
 			session.save(usuario);
 			
 			session.getTransaction().commit();
 			session.close();
-			
-			this.sessionFactory.close();
 		} catch (Exception e) {
 			ok = false;
-			System.out.println("Problem creating session factory");
-		    e.printStackTrace();
 		}
 		
 		return ok;
 	}
 	
-	private void setup() throws Exception {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-		        .configure() // configures settings from hibernate.cfg.xml
-		        .build();
+	public boolean modificarUsuario(Usuario actual, Usuario modificado) {
+		boolean ok = true;
+		
 		try {
-		    sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-		} catch (Exception ex) {
-		    throw ex;
+			Session session = this.sf.openSession();
+			session.beginTransaction();
+			
+			String hql = "update Usuario u set  ";
+			if(!actual.getName().equals(modificado.getName()))
+				hql += "u.name='" + modificado.getName() + "',";
+			if(!actual.getLastName().equals(modificado.getLastName()))
+				hql += "u.lastName='" + modificado.getLastName() + "',";
+			if(actual.getAge() != modificado.getAge())
+				hql += "u.age='" + modificado.getAge() + "',";
+			if(actual.getGender() != modificado.getGender())
+				hql += "u.gender='" + modificado.getGender() + "',";
+			if(!actual.getPassword().equals(modificado.getPassword()))
+				hql += "u.password='" + modificado.getPassword() + "',";
+			hql = hql.substring(0, hql.length() - 1);
+			hql += " where u.email='" + actual.getEmail() + "'";
+			Query<?> query = session.createQuery(hql);
+			query.executeUpdate();
+			
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			ok = false;
 		}
+		
+		return ok;
 	}
 
+	public boolean eliminarUsuario(Usuario usuario) {
+		boolean ok = true;
+		
+		try {
+			Session session = this.sf.openSession();
+			session.beginTransaction();
+			
+			String hql = "delete from Usuario u where u.email=:email";
+			Query<?> query = session.createQuery(hql);
+			query.setParameter("email", usuario.getEmail());
+			query.executeUpdate();
+			
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			ok = false;
+		}
+		
+		return ok;
+	}
 }

@@ -1,0 +1,10 @@
+package model;
+
+public enum Categoria {
+	LIBROS,
+	EBOOKS,
+	LIBROSINGLES,
+	LIBROSEXTRANJERO,
+	LIBROSINFANTIL,
+	LIBROSTEXTO
+}
