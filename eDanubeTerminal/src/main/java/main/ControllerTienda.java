@@ -1,11 +1,10 @@
 package main;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import facade.FacadeUsuario;
-import model.Carrito;
 import model.OpcionTienda;
 import model.Producto;
 import model.Usuario;
@@ -15,7 +14,7 @@ public class ControllerTienda {
 	private Scanner in;
 	private FacadeUsuario facadeUsuario;
 	private Usuario usuario;
-	private List<Producto> listaProductos;
+	private ArrayList<Producto> listaProductos;
 	
 	public ControllerTienda(Scanner in, FacadeUsuario facade, Usuario usuario) {
 		this.in = in;
@@ -47,8 +46,14 @@ public class ControllerTienda {
 				case PRODUCTO5:
 					this.mostrarProducto(this.listaProductos.get(4));
 					break;
+				case BUSCAR:
+					this.buscarProductos();
+					break;
 				case CARRITO:
 					this.mostrarCarrito();
+					break;
+				case LISTADESEOS:
+					this.mostrarListaDeseos();
 					break;
 				case SALIR:
 					salir = true;
@@ -61,9 +66,12 @@ public class ControllerTienda {
 	
 	private void muestraProductos() {
 		int cont = 1;
-		for(Producto p: listaProductos) {
-			System.out.println("\t" + cont + ". " + p.getNombre() + " [" + p.getCategoria().name() + "] ");
-			cont++;
+		
+		if(listaProductos.size() > 0) {
+			for(Producto p: listaProductos) {
+				System.out.println("\t" + cont + ". " + p.getNombre() + " [" + p.getCategoria().name() + "] ");
+				cont++;
+			}
 		}
 	}
 	
@@ -81,8 +89,10 @@ public class ControllerTienda {
 			this.muestraProductos();
 			
 			System.out.println("\n\tTambién puedes elegir estas opciones:");
-			System.out.println("\t6. Carrito");
-			System.out.println("\t7. Atrás");
+			System.out.println("\t6. Buscar");
+			System.out.println("\t7. Carrito");
+			System.out.println("\t8. Lista de deseos");
+			System.out.println("\t0. Atrás");
 			System.out.print("Opción > ");
 			
 			opcion = this.in.nextLine();
@@ -108,10 +118,18 @@ public class ControllerTienda {
 				ok = true;
 			}
 			else if(opcion.equals("6")) {
-				ot = OpcionTienda.CARRITO;
+				ot = OpcionTienda.BUSCAR;
 				ok = true;
 			}
 			else if(opcion.equals("7")) {
+				ot = OpcionTienda.CARRITO;
+				ok = true;
+			}
+			else if(opcion.equals("8")) {
+				ot = OpcionTienda.LISTADESEOS;
+				ok = true;
+			}
+			else if(opcion.equals("0")) {
 				ot = OpcionTienda.SALIR;
 				ok = true;
 			}
@@ -137,7 +155,8 @@ public class ControllerTienda {
 			
 			System.out.println("\nOpciones:");
 			System.out.println("\t1. Añadir al carrito");
-			System.out.println("\t2. Atrás");
+			System.out.println("\t2. Añadir a lista de deseos");
+			System.out.println("\t3. Atrás");
 			System.out.print("Opcion > ");
 			
 			opcion = this.in.nextLine();
@@ -154,6 +173,8 @@ public class ControllerTienda {
 				atras = true;
 			}
 			else if(opcion.equals("2"))
+				this.facadeUsuario.añadirListaDeseos(p, this.usuario);
+			else if(opcion.equals("3"))
 				atras = true;
 			else
 				System.err.println("\nERROR: debes introducir alguna de las opciones disponibles");
@@ -193,7 +214,8 @@ public class ControllerTienda {
 			opcion = this.in.nextLine();
 			
 			if(opcion.equals("1")) {
-				this.facadeUsuario.eliminarCarrito(p);
+				ok = this.facadeUsuario.eliminarCarrito(p);
+				if(!ok) System.err.println("\nERROR: se ha producido un error al intentar borrar el artículo del carrito");
 				ok = true;
 			}
 			else if(opcion.equals("2")) {
@@ -212,6 +234,41 @@ public class ControllerTienda {
 			else
 				System.err.println("\nERROR: debes seleccionar alguna de las opciones disponibles");
 		}
+	}
+	
+	private void mostrarListaDeseos() {
+		boolean atras = false;
+		
+		while(!atras) {
+			ArrayList<Producto> lista = this.facadeUsuario.getListaDeseos(this.usuario);
+			System.out.println("\nLISTA DE DESEOS:");
+			System.out.println(this.facadeUsuario.mostrarListaDeseos(this.usuario));
+			System.out.println("\n\tPuede seleccionar alguno de los productos para eliminarlo.");
+			System.out.println("\t0. Atrás");
+			System.out.print("Opcion > ");
+			
+			int opcion = this.in.nextInt();
+			this.in.nextLine();
+			
+			if(opcion > 0 && opcion <= lista.size())
+				this.facadeUsuario.eliminarListaDeseos(lista.get(opcion-1), this.usuario);
+			else if(opcion == 0)
+				atras = true;
+			else
+				System.err.println("\nERROR: debes seleccionar alguna de las opciones disponibles");
+				
+		}
+	}
+	
+	public void setUsuario(Usuario u) {
+		this.usuario = u;
+	}
+	
+	private void buscarProductos() {
+		System.out.print("Por favor, introduzca una palabra clave > ");
+		String busqueda = this.in.nextLine();
+		
+		this.listaProductos = this.facadeUsuario.verTiendaBusqueda(busqueda);
 	}
 	
 }

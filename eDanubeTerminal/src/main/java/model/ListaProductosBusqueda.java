@@ -6,12 +6,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
-public class ListaProductosHome implements IListaProductos {
+public class ListaProductosBusqueda implements IListaProductos {
 	
 	private SessionFactory sf;
+	private String busqueda;
 	
-	public ListaProductosHome(SessionFactory sf) {
+	public ListaProductosBusqueda(SessionFactory sf, String busqueda) {
 		this.sf = sf;
+		this.busqueda = busqueda;
 	}
 
 	public ArrayList<Producto> getListaProductos() {
@@ -21,7 +23,7 @@ public class ListaProductosHome implements IListaProductos {
 			Session session = this.sf.openSession();
 			session.beginTransaction();
 			
-			String hql = "select p from Producto p";
+			String hql = "select p from Producto p where p.nombre like '%" +  this.busqueda + "%'";
 			Query<?> query = session.createQuery(hql).setMaxResults(5);
 			lista = (ArrayList<Producto>) query.getResultList();
 			

@@ -6,6 +6,8 @@ public enum OpcionTienda {
 	PRODUCTO3,
 	PRODUCTO4,
 	PRODUCTO5,
+	BUSCAR,
 	CARRITO,
+	LISTADESEOS,
 	SALIR
 }

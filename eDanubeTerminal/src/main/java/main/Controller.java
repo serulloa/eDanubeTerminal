@@ -65,6 +65,9 @@ public class Controller {
 	    		case CONTACTO:
 	    			this.mostrarContacto();
 	    			break;
+	    		case EMPLEO:
+	    			this.mostrarEmpleo();
+	    			break;
 	    		case SALIR:
 	    			System.out.println("Hasta la próxima!");
 	    			salir = true;
@@ -166,6 +169,7 @@ public class Controller {
     	if(usuario != null) {
     		ok = true;
     		this.usuario = usuario;
+    		this.ct.setUsuario(usuario);
     	}
     	else
     		System.err.println("\nERROR: el email o la contraseña son incorrectos, por favor, revíselos.");
@@ -207,7 +211,8 @@ public class Controller {
     		System.out.println("\t1. Tienda");
     		System.out.println("\t2. Mi área personal");
     		System.out.println("\t3. Contacto");
-    		System.out.println("\t4. Salir");
+    		System.out.println("\t4. Empleo");
+    		System.out.println("\t0. Salir");
     		System.out.print("Opción > ");
     		
     		opcion = this.in.nextLine();
@@ -225,6 +230,10 @@ public class Controller {
     			ok = true;
     		}
     		else if(opcion.equals("4")) {
+    			op = Opcion.EMPLEO;
+    			ok = true;
+    		}
+    		else if(opcion.equals("0")) {
     			op = Opcion.SALIR;
     			ok = true;
     		}
@@ -326,6 +335,10 @@ public class Controller {
 
     private void mostrarContacto() {
     	System.out.println(this.facadeUsuario.mostrarContacto());
+    }
+    
+    private void mostrarEmpleo() {
+    	System.out.println(this.facadeUsuario.mostrarEmpleo());
     }
     
 }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Carrito {
+public class Carrito implements IListaProductosUsuario {
 	
 	private LinkedHashMap<Producto, Integer> productos;
 	private double precioTotal;
@@ -23,9 +23,12 @@ public class Carrito {
 		precioTotal += p.getPrecio() * cantidad;
 	}
 	
-	public void eliminar(Producto p) {
+	public boolean eliminar(Producto p) {
+		boolean ok = true;
 		precioTotal -= p.getPrecio() * productos.get(p);
-		productos.remove(p);
+		if(productos.remove(p) == null)
+			ok = false;
+		return ok;
 	}
 	
 	public String toString() {

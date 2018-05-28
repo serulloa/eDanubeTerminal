@@ -16,5 +16,6 @@
 		
 		<mapping class="model.Usuario" />
 		<mapping class="model.Producto" />
+		<mapping class="model.ListaDeseosItem" />
 	</session-factory>
 </hibernate-configuration>
