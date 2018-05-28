@@ -103,4 +103,23 @@ public class GestionUsuario {
 		
 		return ok;
 	}
+
+	public boolean switchPremium(Usuario u) {
+		boolean ok = true;
+		u.setPremium(!u.isPremium());
+		
+		try {
+			Session session = this.sf.openSession();
+			session.beginTransaction();
+			
+			session.update(u);
+			
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			ok = false;
+		}
+		
+		return ok;
+	}
 }

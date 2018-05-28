@@ -103,4 +103,8 @@ public class FacadeUsuario {
 		return this.iVistaPagina.buildContenidoVista();
 	}
 	
+	public boolean switchPremium(Usuario u) {
+		return this.gestionUsuario.switchPremium(u);
+	}
+	
 }

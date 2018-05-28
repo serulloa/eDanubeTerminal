@@ -261,8 +261,10 @@ public class Controller {
 	    	System.out.println("\nOpciones:");
 	    	System.out.println("\t1. Modificar datos");
 	    	System.out.println("\t2. Eliminar cuenta");
-	    	System.out.println("\t3. Atrás");
+	    	System.out.println("\t3. Suscripción premium");
+	    	System.out.println("\t0. Atrás");
 	    	
+	    	System.out.print("Opcion > ");
 	    	opcion = this.in.nextLine();
 	    	
 	    	if(opcion.equals("1"))
@@ -270,6 +272,8 @@ public class Controller {
 	    	else if(opcion.equals("2"))
 	    		this.eliminarCuenta();
 	    	else if(opcion.equals("3"))
+	    		this.suscripcionPremium();
+	    	else if(opcion.equals("0"))
 	    		atras = true;
 	    	else
 	    		System.err.println("\nERROR: debes introducir alguna de las opciones disponibles.");
@@ -311,7 +315,10 @@ public class Controller {
     	ok = this.facadeUsuario.modificarUsuario(this.usuario, modificado);
     	
     	if(!ok) System.err.println("\nERROR: No ha sido posible actualizar tus datos.");
-    	else System.out.println("\nDatos personales actualizados con éxito!");
+    	else {
+    		System.out.println("\nDatos personales actualizados con éxito!");
+    		this.usuario = modificado;
+    	}
     }
 
     private void eliminarCuenta() {
@@ -339,6 +346,33 @@ public class Controller {
     
     private void mostrarEmpleo() {
     	System.out.println(this.facadeUsuario.mostrarEmpleo());
+    }
+    
+    private void suscripcionPremium() {
+    	boolean ok = false;
+    	
+    	while(!ok) {
+    		String opcion = "";
+    		if(this.usuario.isPremium()) {
+    			System.out.println("Actualmente está suscrito al servicio premium.");
+    			System.out.println("Quiere desuscribirse? [si/no]");
+    		}
+    		else {
+    			System.out.println("Actualmente no está suscrito al servicio premium.");
+    			System.out.print("Quiere suscribirse? [si/no] ");
+    		}
+    		
+    		opcion = this.in.nextLine();
+    		
+    		if(opcion.equals("si"))
+    			ok = this.facadeUsuario.switchPremium(this.usuario);
+    		else if(opcion.equals("no"))
+    			ok = true;
+    		else
+    			System.err.println("\nERROR: debe seleccionar si o no.");
+    	}
+    	
+    	if(this.usuario.isPremium()) System.out.println("\nEsta suscripción será activada cuando finalize el mes. Se le cobrarán 10.95€.");
     }
     
 }
